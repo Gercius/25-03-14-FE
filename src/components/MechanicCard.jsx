@@ -1,4 +1,41 @@
+import { useEffect, useState } from "react";
+import { rateMechanic } from "../api/MechanicsApi";
+
 const MechanicCard = ({ mechanicData }) => {
+    const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState({ show: false, msg: "" });
+    const [rating, setRating] = useState(mechanicData.rating || 0);
+    const [isLiked, setIsLiked] = useState(false);
+
+    useEffect(() => {
+        const likedMechanics = JSON.parse(localStorage.getItem("likedMechanics")) || [];
+        if (likedMechanics.includes(mechanicData._id)) {
+            setIsLiked(true);
+        }
+    }, [mechanicData._id]);
+
+    const handleRateMechanic = async () => {
+        if (isLiked) return;
+
+        setIsLoading(true);
+        setError({ show: false, msg: "" });
+
+        try {
+            await rateMechanic(mechanicData._id, rating);
+            setRating(rating + 1);
+
+            const likedMechanics = JSON.parse(localStorage.getItem("likedMechanics")) || [];
+            likedMechanics.push(mechanicData._id);
+            localStorage.setItem("likedMechanics", JSON.stringify(likedMechanics));
+
+            setIsLiked(true);
+        } catch (err) {
+            setError({ show: true, msg: err.message });
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
     return (
         <li className="col-12 col-md-6 col-lg-4 col-xl-3">
             <div className="card h-100 shadow-sm">
@@ -21,9 +58,11 @@ const MechanicCard = ({ mechanicData }) => {
                         <strong>Autoservisas:</strong> {mechanicData.autoRepairShop.name}
                     </p>
                 </div>
-                <div className="card-footer text-muted d-flex justify-content-around">
-                    <button>Like</button>
-                    <span>Įvertinimas: {mechanicData.rating}</span>
+                <div className="card-footer text-muted d-flex justify-content-around align-items-center">
+                    <button className="btn btn-primary " onClick={handleRateMechanic} disabled={isLiked || isLoading}>
+                        {isLoading ? "Patiktukinama" : "Patiktukinti"}
+                    </button>
+                    <span>Įvertinimas: {rating}</span>
                 </div>
             </div>
         </li>

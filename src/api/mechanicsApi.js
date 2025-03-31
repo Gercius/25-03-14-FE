@@ -38,4 +38,16 @@ export const getMechanics = () => {
     return { isLoading, error, mechanicsData };
 };
 
-// todo - like mechanic functionality
+export const rateMechanic = async (id, currentRating) => {
+    const response = await fetch(`${API_ENDPOINT}/${id}`, {
+        method: "PATCH",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ rating: currentRating + 1 }),
+    });
+
+    if (!response.ok) {
+        throw new Error(`Response status: ${response.status}`);
+    }
+};
