@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { getUniqueSpecialties } from "../utils";
-import { getMechanics } from "../api/mechanicsApi";
+import { getMechanics } from "../api/mechanicApi";
 import MechanicList from "../components/MechanicList";
 import Search from "../components/Search";
 

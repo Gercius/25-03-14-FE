@@ -1,9 +1,8 @@
 import { useEffect, useState } from "react";
-import { rateMechanic } from "../api/MechanicsApi";
+import { rateMechanic } from "../api/mechanicApi";
 
 const MechanicCard = ({ mechanicData }) => {
     const [isLoading, setIsLoading] = useState(false);
-    const [error, setError] = useState({ show: false, msg: "" });
     const [rating, setRating] = useState(mechanicData.rating || 0);
     const [isLiked, setIsLiked] = useState(false);
 
@@ -18,7 +17,6 @@ const MechanicCard = ({ mechanicData }) => {
         if (isLiked) return;
 
         setIsLoading(true);
-        setError({ show: false, msg: "" });
 
         try {
             await rateMechanic(mechanicData._id, rating);
@@ -30,7 +28,7 @@ const MechanicCard = ({ mechanicData }) => {
 
             setIsLiked(true);
         } catch (err) {
-            setError({ show: true, msg: err.message });
+            console.error(err);
         } finally {
             setIsLoading(false);
         }
